@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>고교학점제 과목 이수 진단기 | 2022 개정 교육과정</title>
+  <meta name="description" content="2022 개정 교육과정 및 고교학점제 졸업 기준(174학점, 국영수 81학점 이하, 과학중점과정 요건)을 실시간으로 진단하고 시뮬레이션할 수 있는 웹앱입니다." />
+
+  <!-- 웹폰트: Pretendard & Outfit -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- 스타일시트 -->
+  <link rel="stylesheet" href="css/style.css" />
+
+  <!-- 외부 라이브러리 CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+
+  <!-- 은은한 파스텔 앰비언트 메쉬 배경 -->
+  <div class="ambient-mesh">
+    <div class="mesh-orb orb-1"></div>
+    <div class="mesh-orb orb-2"></div>
+    <div class="mesh-orb orb-3"></div>
+    <div class="mesh-orb orb-4"></div>
+  </div>
+
+  <div class="app-wrapper">
+    <!-- 상단 헤더 -->
+    <header class="app-header glass-card">
+      <div class="header-brand">
+        <div class="brand-icon">
+          <i data-lucide="graduation-cap"></i>
+        </div>
+        <div class="brand-text">
+          <h1>
+            고교학점제 이수 진단기
+            <span class="brand-badge" id="school-badge">정명고등학교</span>
+          </h1>
+          <p>나의 선택과목으로 알아보는 실시간 졸업 요건 & 과학중점과정 시뮬레이터</p>
+        </div>
+      </div>
+
+      <!-- 헤더 우측 조작 버튼군 -->
+      <div class="header-controls">
+        <!-- 과정 토글 (일반과정 vs 과학중점과정) -->
+        <div class="track-toggle-container">
+          <button type="button" class="track-btn active" id="btn-track-general">
+            <i data-lucide="book-open"></i> 일반과정
+          </button>
+          <button type="button" class="track-btn track-sci" id="btn-track-science">
+            <i data-lucide="atom"></i> 과학중점과정
+          </button>
+        </div>
+
+        <!-- 엑셀 양식 다운로드 & 업로드 모달 열기 -->
+        <button type="button" class="btn btn-secondary" id="btn-open-excel-modal" title="학교별 엑셀 과목편성표 양식 다운로드 및 업로드">
+          <i data-lucide="file-spreadsheet"></i> 엑셀 관리
+        </button>
+
+        <!-- 선택 결과 엑셀 내보내기 -->
+        <button type="button" class="btn btn-secondary" id="btn-export-result" title="나의 과목 선택표와 진단 결과 엑셀로 저장">
+          <i data-lucide="download"></i> 결과 내보내기
+        </button>
+
+        <!-- 선택 초기화 -->
+        <button type="button" class="btn btn-danger-soft" id="btn-reset-selections" title="선택 과목 초기화">
+          <i data-lucide="rotate-ccw"></i> 초기화
+        </button>
+      </div>
+    </header>
+
+    <!-- 대시보드 레이아웃 -->
+    <main class="dashboard-layout">
+      
+      <!-- 좌측: 실시간 진단 대시보드 사이드바 -->
+      <aside class="sidebar-dashboard">
+        
+        <!-- 종합 판정 배너 -->
+        <div class="status-banner glass-card banner-in_progress" id="status-banner">
+          <div class="status-banner-icon" id="banner-icon">
+            <i data-lucide="sparkles"></i>
+          </div>
+          <div class="status-banner-content">
+            <h3 id="banner-title">📝 교육과정 설계 진행 중...</h3>
+            <p id="banner-desc">2, 3학년 선택과목을 지정하여 나만의 교육과정을 완성해 보세요.</p>
+          </div>
+        </div>
+
+        <!-- 핵심 요건 메트릭 카드 2분할 -->
+        <div class="metrics-row">
+          <!-- 1. 총 이수 학점 (174 이상) -->
+          <div class="metric-box glass-card" id="total-credit-box">
+            <div class="metric-header">
+              <span>교과 총 이수 학점</span>
+              <span class="metric-target-tag">기준: 174학점 이상</span>
+            </div>
+            <div class="metric-body">
+              <span class="metric-number" id="val-total-credits">0</span>
+              <span class="metric-unit">/ 174 학점</span>
+            </div>
+            <div class="metric-footer">
+              <span class="metric-status-badge badge-warn" id="badge-total-status">
+                <i data-lucide="clock"></i> 계산 중
+              </span>
+            </div>
+          </div>
+
+          <!-- 2. 국·영·수 합산 학점 (81 이하) -->
+          <div class="metric-box glass-card" id="core-credit-box">
+            <div class="metric-header">
+              <span>국·영·수 합산</span>
+              <span class="metric-target-tag">제한: 81학점 이하</span>
+            </div>
+            <div class="metric-body">
+              <span class="metric-number" id="val-core-credits">0</span>
+              <span class="metric-unit">/ 81 학점</span>
+            </div>
+            <div class="metric-footer">
+              <span class="metric-status-badge badge-pass" id="badge-core-status">
+                <i data-lucide="check"></i> 안전
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 과학중점과정 진단 위젯 (과정 활성화 시 강조 및 표시) -->
+        <div class="science-track-widget glass-card" id="science-track-widget">
+          <div class="widget-title">
+            <span><i data-lucide="flask-conical"></i> 과학중점과정 필수 요건 진단</span>
+            <span class="metric-target-tag" id="sci-track-status-pill">진단 중</span>
+          </div>
+
+          <!-- 과·수·정 총 이수학점 -->
+          <div class="stem-stat-row">
+            <span class="stem-stat-label">과학·수학·정보 총합</span>
+            <span class="stem-stat-val" id="val-stem-credits">0 / 79학점 (45%)</span>
+          </div>
+
+          <!-- 물화생지 일반선택 4과목 필수 이수 칩 -->
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; font-weight: 600;">
+              <span>물·화·생·지 일반선택 4과목 필수</span>
+              <span id="sci-general-count-text" style="color: #0891b2; font-weight: 700;">0 / 4</span>
+            </div>
+            <div class="sci-general-chips">
+              <div class="sci-chip" id="chip-physics">
+                <i data-lucide="circle"></i> 물리학
+              </div>
+              <div class="sci-chip" id="chip-chemistry">
+                <i data-lucide="circle"></i> 화학
+              </div>
+              <div class="sci-chip" id="chip-biology">
+                <i data-lucide="circle"></i> 생명과학
+              </div>
+              <div class="sci-chip" id="chip-earth">
+                <i data-lucide="circle"></i> 지구과학
+              </div>
+            </div>
+          </div>
+
+          <!-- 과학 진로선택 6과목 이상 이수 카운터 -->
+          <div class="sci-advanced-counter">
+            <span style="font-weight: 600;">과학 진로선택과목 이수</span>
+            <span class="metric-status-badge badge-warn" id="badge-sci-advanced">
+              <i data-lucide="clock"></i> 0 / 6과목
+            </span>
+          </div>
+        </div>
+
+        <!-- 교과군별 이수 비중 도넛 차트 -->
+        <div class="chart-card glass-card">
+          <div class="card-title">
+            <i data-lucide="pie-chart"></i> 교과(군)별 이수 학점 비중
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="category-doughnut-chart"></canvas>
+          </div>
+          <!-- 교과군 세부 학점 목록 -->
+          <div class="category-pills-list" id="category-pills-container"></div>
+        </div>
+
+      </aside>
+
+      <!-- 우측: 학년별 탭 및 과목 선택 영역 -->
+      <section class="content-area">
+        
+        <!-- 학년 네비게이션 탭 -->
+        <nav class="grade-tabs glass-card" id="grade-nav-tabs">
+          <button type="button" class="grade-tab-btn" data-grade="1">
+            <i data-lucide="bookmark"></i> 1학년 (공통/지정)
+          </button>
+          <button type="button" class="grade-tab-btn active" data-grade="2">
+            <i data-lucide="layers"></i> 2학년 (선택과목)
+          </button>
+          <button type="button" class="grade-tab-btn" data-grade="3">
+            <i data-lucide="compass"></i> 3학년 (심화선택)
+          </button>
+          <button type="button" class="grade-tab-btn" data-grade="all">
+            <i data-lucide="list-checks"></i> 전체 학년 요약
+          </button>
+        </nav>
+
+        <!-- 학기별 과목 카드 컨테이너 -->
+        <div id="semesters-container">
+          <!-- JS에서 동적으로 1학기/2학기 카드 렌더링 -->
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+
+  <!-- 토스트 알림 컨테이너 -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- 엑셀 표준 양식 다운로드 및 업로드 모달 -->
+  <div class="modal-overlay" id="excel-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i data-lucide="file-spreadsheet" style="color: #2563eb;"></i>
+          학교별 교육과정 엑셀 관리
+        </div>
+        <button type="button" class="modal-close-btn" id="btn-close-excel-modal">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+
+      <p style="font-size: 13.5px; color: #475569; line-height: 1.6;">
+        학교마다 학교지정 과목과 선택과목군 편제가 다릅니다. 
+        <strong>표준 공통 엑셀 양식</strong>을 다운로드하여 우리 학교의 교과목과 학점을 입력한 뒤 업로드해 보세요!
+      </p>
+
+      <!-- 드래그 앤 드롭 업로드 영역 -->
+      <div class="upload-dropzone" id="excel-dropzone">
+        <input type="file" id="excel-file-input" accept=".xlsx, .xls" style="display: none;" />
+        <i data-lucide="upload-cloud" class="upload-icon"></i>
+        <div>
+          <strong style="font-size: 14px; color: #1e293b;">학교별 엑셀 파일(.xlsx)을 드래그하거나 클릭하여 선택</strong>
+          <p style="font-size: 12px; color: #64748b; margin-top: 4px;">표준 양식 파일 또는 편집 완료된 학교 편성표</p>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+        <button type="button" class="btn btn-secondary" id="btn-download-template">
+          <i data-lucide="download"></i> 표준 엑셀 양식 다운로드
+        </button>
+        <button type="button" class="btn btn-secondary" id="btn-restore-default">
+          <i data-lucide="rotate-ccw"></i> 기본 편성표로 복원
+        </button>
+      </div>
+
+      <div style="background: #f1f5f9; padding: 12px 14px; border-radius: 10px; font-size: 12px; color: #334155; line-height: 1.5;">
+        <strong>💡 엑셀 작성 시 유의사항:</strong><br/>
+        1. <code>과목편성표</code> 시트의 열 헤더는 변경하지 마세요.<br/>
+        2. 학교지정 필수 과목은 구분 열에 <code>학교지정</code>으로 기재합니다.<br/>
+        3. 동일한 선택군은 <code>선택군코드</code>와 <code>선택군_최대선택수</code>를 같게 입력합니다.
+      </div>
+    </div>
+  </div>
+
+  <!-- 메인 애플리케이션 스크립트 (ES 모듈) -->
+  <script type="module" src="js/app.js"></script>
+
+</body>
+</html>
