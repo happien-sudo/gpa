@@ -1,11 +1,13 @@
-/**
- * 고교학점제 과목 이수 진단기 - 메인 애플리케이션 제어 모듈
- */
-
-import { defaultSubjects, defaultSelectGroups, categoryColors } from "./defaultData.js";
-import { validateCurriculum } from "./validator.js";
-import { initChart, updateChart } from "./chartManager.js";
-import { downloadStandardTemplate, parseExcelFile, exportSelectionResult } from "./excelManager.js";
+// 전역 스크립트 객체 참조 (로컬 더블클릭 및 모듈 호환)
+const defaultSubjects = window.defaultSubjects || [];
+const defaultSelectGroups = window.defaultSelectGroups || {};
+const categoryColors = window.categoryColors || {};
+const validateCurriculum = window.validateCurriculum;
+const initChart = window.initChart;
+const updateChart = window.updateChart;
+const downloadStandardTemplate = window.downloadStandardTemplate;
+const parseExcelFile = window.parseExcelFile;
+const exportSelectionResult = window.exportSelectionResult;
 
 // 애플리케이션 상태 객체
 const state = {
@@ -236,15 +238,6 @@ function setupEventListeners() {
       handleExcelUpload(e.target.files[0]);
     }
   });
-
-  // 학생 선택 결과 엑셀 내보내기 버튼
-  const btnExport = document.getElementById("btn-export-result");
-  btnExport?.addEventListener("click", () => {
-    const selectedList = state.subjects.filter(s => state.selectedSubjects.has(s.id));
-    const validation = validateCurriculum(state.selectedSubjects, state.subjects, state.selectGroups, state.isScienceTrack);
-    exportSelectionResult(selectedList, validation, state.schoolName);
-    showToast("과목 선택 및 진단 결과가 엑셀로 저장되었습니다.", "success");
-  });
 }
 
 /**
@@ -331,16 +324,8 @@ function renderSemesters() {
   container.innerHTML = "";
 
   if (state.currentGrade === "all") {
-    // 전체 학년 요약 뷰 (1학년, 2학년, 3학년 연속 출력)
-    [1, 2, 3].forEach(grade => {
-      [1, 2].forEach(term => {
-        const termSubjects = state.subjects.filter(s => s.grade === grade && s.term === term);
-        if (termSubjects.length > 0) {
-          const card = createSemesterCard(grade, term, termSubjects);
-          container.appendChild(card);
-        }
-      });
-    });
+    // 전체 학년 요약 뷰: 학교 지정 필수 이수 과목과 학생이 선택한 과목만 표시
+    renderAllGradesSummary(container);
   } else {
     // 선택된 학년의 1학기, 2학기 렌더링
     [1, 2].forEach(term => {
@@ -353,6 +338,262 @@ function renderSemesters() {
   if (window.lucide) {
     window.lucide.createIcons();
   }
+}
+
+/**
+ * 전체 학년 요약 뷰 렌더링: 학교 지정 필수 과목 + 학생 선택 과목만 선별 표시
+ */
+function renderAllGradesSummary(container) {
+  const validation = validateCurriculum(
+    state.selectedSubjects,
+    state.subjects,
+    state.selectGroups,
+    state.isScienceTrack
+  );
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "summary-view-container";
+
+  // 1. 상단 툴바 (통계 및 PDF 다운로드, 인쇄 버튼)
+  const toolbar = document.createElement("div");
+  toolbar.className = "summary-toolbar glass-card";
+  toolbar.innerHTML = `
+    <div class="summary-toolbar-left">
+      <div class="summary-toolbar-title">
+        <i data-lucide="list-checks" style="color: #2563eb;"></i>
+        <span>3개년 교육과정 과목 이수 일람표</span>
+      </div>
+      <div class="summary-toolbar-sub">
+        학교 지정 필수 이수 과목과 학생이 직접 선택한 과목만 정리된 3개년 교육과정표입니다.
+      </div>
+    </div>
+    <div class="summary-toolbar-right">
+      <span class="summary-stat-pill">
+        총 이수: <strong style="color: ${validation.isTotalCreditValid ? '#059669' : '#d97706'}">${validation.totalCredits}</strong> / 174학점
+      </span>
+      <span class="summary-stat-pill">
+        국영수: <strong style="color: ${validation.isCoreCreditValid ? '#059669' : '#dc2626'}">${validation.coreCredits}</strong> / 81학점
+      </span>
+      <button type="button" class="btn-pdf-download" id="btn-download-pdf-summary" title="A4 세로 규격 PDF 파일 다운로드">
+        <i data-lucide="file-down"></i> PDF 다운로드 (A4 세로)
+      </button>
+      <button type="button" class="btn btn-secondary" id="btn-print-summary" title="인쇄 및 브라우저 PDF 저장">
+        <i data-lucide="printer"></i> 인쇄
+      </button>
+    </div>
+  `;
+  wrapper.appendChild(toolbar);
+
+  // 2. 화면에 실시간으로 표시되며 PDF로 그대로 출력되는 A4 리포트 시트
+  const sheet = document.createElement("div");
+  sheet.className = "printable-summary-sheet";
+  sheet.id = "printable-summary-sheet";
+
+  const printDate = new Date().toLocaleDateString('ko-KR', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+
+  // 학년별/학기별 표 생성
+  let semestersHtml = "";
+  [1, 2, 3].forEach(grade => {
+    let termsCols = "";
+    [1, 2].forEach(term => {
+      const enrolled = state.subjects.filter(
+        s => s.grade === grade && s.term === term && (s.fixed || state.selectedSubjects.has(s.id))
+      );
+      const termCr = enrolled.reduce((sum, s) => sum + s.credits, 0);
+
+      const sorted = [...enrolled].sort((a, b) => {
+        if (a.fixed !== b.fixed) return a.fixed ? -1 : 1;
+        return a.category.localeCompare(b.category);
+      });
+
+      let rowsHtml = "";
+      if (sorted.length === 0) {
+        rowsHtml = `<tr><td colspan="4" style="text-align: center; color: #94a3b8; padding: 12px; font-size: 11px;">선택된 과목이 없습니다. (${grade}학년 탭에서 선택해 주세요)</td></tr>`;
+      } else {
+        sorted.forEach((s, idx) => {
+          const bg = idx % 2 === 1 ? '#f8fafc' : '#ffffff';
+          rowsHtml += `
+            <tr style="background: ${bg}; border-bottom: 1px solid #f1f5f9;">
+              <td style="padding: 4px 8px; font-weight: 700; color: ${s.fixed ? '#64748b' : '#059669'}; font-size: 10px; width: 56px;">
+                <span style="background: ${s.fixed ? '#f1f5f9' : '#ecfdf5'}; border: 1px solid ${s.fixed ? '#cbd5e1' : '#a7f3d0'}; padding: 1px 5px; border-radius: 4px; display: inline-block;">
+                  ${s.fixed ? '학교지정' : '학생선택'}
+                </span>
+              </td>
+              <td style="padding: 4px 8px; font-size: 10.5px; color: #475569; width: 50px;">
+                ${s.category.length > 5 ? '교양' : s.category}
+              </td>
+              <td style="padding: 4px 8px; font-weight: 700; font-size: 11px; color: #0f172a;">
+                ${s.name}
+              </td>
+              <td style="padding: 4px 8px; text-align: right; font-weight: 700; font-size: 10.5px; color: #1e40af; width: 42px;">
+                ${s.credits}학점
+              </td>
+            </tr>
+          `;
+        });
+      }
+
+      termsCols += `
+        <div style="flex: 1; border: 1px solid #cbd5e1; border-radius: 7px; overflow: hidden; background: #ffffff;">
+          <div style="background: #f1f5f9; padding: 6px 10px; font-size: 12px; font-weight: 800; color: #1e3a8a; display: flex; justify-content: space-between; border-bottom: 1px solid #cbd5e1;">
+            <span>${grade}학년 ${term}학기</span>
+            <span style="color: #2563eb;">${termCr}학점</span>
+          </div>
+          <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+              <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; font-size: 9.5px; color: #64748b; text-align: left;">
+                <th style="padding: 4px 8px;">구분</th>
+                <th style="padding: 4px 8px;">교과군</th>
+                <th style="padding: 4px 8px;">과목명</th>
+                <th style="padding: 4px 8px; text-align: right;">학점</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHtml}
+            </tbody>
+          </table>
+        </div>
+      `;
+    });
+
+    semestersHtml += `
+      <div style="margin-bottom: 12px; page-break-inside: avoid;">
+        <div style="font-size: 12.5px; font-weight: 800; color: #1e3a8a; margin-bottom: 5px; display: flex; align-items: center; gap: 4px;">
+          <span>📌 ${grade}학년 교육과정</span>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          ${termsCols}
+        </div>
+      </div>
+    `;
+  });
+
+  sheet.innerHTML = `
+    <!-- 문서 상단 타이틀 -->
+    <div style="border-bottom: 2px solid #1e3a8a; padding-bottom: 10px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: flex-end;">
+      <div>
+        <div style="font-size: 11px; font-weight: 700; color: #2563eb; margin-bottom: 2px;">2022 개정 교육과정 고교학점제</div>
+        <h2 style="font-size: 19px; font-weight: 900; color: #0f172a; margin: 0 0 3px 0; letter-spacing: -0.5px;">
+          3개년 과목 이수 선택표
+        </h2>
+        <div style="font-size: 11px; color: #64748b;">학교 지정 필수 이수 과목 및 학생 선택 과목 일람표</div>
+      </div>
+      <div style="text-align: right; font-size: 10px; color: #475569; line-height: 1.6;">
+        <div>발행일자: <strong>${printDate}</strong></div>
+        <div>과정구분: <strong>${state.isScienceTrack ? '과학중점과정' : '일반과정'}</strong></div>
+        <div style="color: #2563eb; font-weight: 700;">웹앱 제작: 정명고 오인석</div>
+      </div>
+    </div>
+
+    <!-- 핵심 진단 요약 박스 -->
+    <div style="display: flex; gap: 10px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 12px; margin-bottom: 14px; font-size: 11px;">
+      <div style="flex: 1;">
+        <span style="color: #64748b; display: block; font-size: 10px;">교과 총 이수학점 (기준 174학점 이상)</span>
+        <strong style="font-size: 13px; color: ${validation.isTotalCreditValid ? '#059669' : '#d97706'};">
+          ${validation.totalCredits} 학점 ${validation.isTotalCreditValid ? '(충족 ✓)' : `(미달, -${174 - validation.totalCredits}학점)`}
+        </strong>
+      </div>
+      <div style="flex: 1;">
+        <span style="color: #64748b; display: block; font-size: 10px;">국·영·수 합산 학점 (제한 81학점 이하)</span>
+        <strong style="font-size: 13px; color: ${validation.isCoreCreditValid ? '#059669' : '#dc2626'};">
+          ${validation.coreCredits} 학점 (${validation.corePercentage}%, ${validation.isCoreCreditValid ? '안전 ✓' : '초과 ⚠️'})
+        </strong>
+      </div>
+      <div style="flex: 1;">
+        <span style="color: #64748b; display: block; font-size: 10px;">과정 요건 진단</span>
+        <strong style="font-size: 13px; color: ${validation.overallStatus === 'success' ? '#059669' : '#d97706'};">
+          ${state.isScienceTrack ? (validation.scienceTrack.isValid ? '과학중점 충족 ✓' : '과학중점 보완 필요') : '일반과정 기준 충족'}
+        </strong>
+      </div>
+    </div>
+
+    <!-- 학년별 표 영역 -->
+    ${semestersHtml}
+
+    <!-- 문서 하단 푸터 및 서명 영역 -->
+    <div style="margin-top: 14px; padding-top: 8px; border-top: 1px solid #cbd5e1; display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: #64748b;">
+      <div>* 본 이수표는 학교 지정 필수 과목과 학생이 직접 선택한 과목만으로 구성된 개인 교육과정표입니다.</div>
+      <div style="font-weight: 700; color: #1e293b;">웹앱 제작자: 정명고 오인석</div>
+    </div>
+  `;
+
+  wrapper.appendChild(sheet);
+  container.appendChild(wrapper);
+
+  // PDF 다운로드 버튼 이벤트 연결
+  const btnDownloadPdf = document.getElementById("btn-download-pdf-summary");
+  btnDownloadPdf?.addEventListener("click", () => {
+    downloadPdfSummary();
+  });
+
+  // 인쇄 버튼 이벤트 연결
+  const btnPrint = document.getElementById("btn-print-summary");
+  btnPrint?.addEventListener("click", () => {
+    window.print();
+  });
+}
+
+/**
+ * 화면에 표시된 요약 리포트(#printable-summary-sheet)를 캡처하여 A4 세로 규격의 PDF 파일로 다운로드합니다.
+ */
+function downloadPdfSummary() {
+  const element = document.getElementById("printable-summary-sheet");
+  if (!element) return;
+
+  if (typeof html2pdf === "undefined") {
+    alert("PDF 라이브러리를 불러오는 중입니다. 잠시 후 다시 시도해 주세요.");
+    return;
+  }
+
+  const btn = document.getElementById("btn-download-pdf-summary");
+  const originalHtml = btn ? btn.innerHTML : "";
+  if (btn) {
+    btn.innerHTML = `<i data-lucide="loader" style="width: 14px; height: 14px;"></i> PDF 생성 중...`;
+    btn.disabled = true;
+  }
+
+  // 화면 스크롤을 상단으로 이동하여 html2canvas가 완벽한 좌표로 캡처하도록 지원
+  window.scrollTo(0, 0);
+
+  const opt = {
+    margin: [8, 8, 8, 8],
+    filename: `고교학점제_3개년_과목이수표_${new Date().toISOString().slice(0, 10)}.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: {
+      scale: 2,
+      useCORS: true,
+      letterRendering: true,
+      scrollY: 0,
+      scrollX: 0
+    },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+
+  html2pdf()
+    .set(opt)
+    .from(element)
+    .save()
+    .then(() => {
+      if (btn) {
+        btn.innerHTML = originalHtml;
+        btn.disabled = false;
+      }
+      showToast("선택 과목이 모두 포함된 A4 세로 PDF 파일이 다운로드되었습니다.", "success");
+      if (window.lucide) window.lucide.createIcons();
+    })
+    .catch((err) => {
+      console.error("PDF 생성 오류:", err);
+      if (btn) {
+        btn.innerHTML = originalHtml;
+        btn.disabled = false;
+      }
+      showToast("PDF 다운로드 중 오류가 발생했습니다: " + err.message, "error");
+      if (window.lucide) window.lucide.createIcons();
+    });
 }
 
 /**

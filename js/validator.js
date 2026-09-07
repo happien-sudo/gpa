@@ -2,12 +2,12 @@
  * 고교학점제 학점 이수 및 교육과정 검증 엔진
  */
 
-export const GRADUATION_MIN_CREDITS = 174;
-export const CORE_MAX_CREDITS = 81;
-export const STEM_MIN_CREDITS = 79; // 과학중점과정 과·수·정 총 이수 기준 (총 교과 174학점의 45% 이상: 78.3 -> 79학점)
-export const SCI_ADVANCED_MIN_COUNT = 6; // 과학 진로선택 필수 이수 과목 수
+const GRADUATION_MIN_CREDITS = 174;
+const CORE_MAX_CREDITS = 81;
+const STEM_MIN_CREDITS = 79; // 과학중점과정 과·수·정 총 이수 기준 (총 교과 174학점의 45% 이상: 78.3 -> 79학점)
+const SCI_ADVANCED_MIN_COUNT = 6; // 과학 진로선택 필수 이수 과목 수
 
-export const REQUIRED_SCI_GENERAL_NAMES = ["물리학", "화학", "생명과학", "지구과학"];
+const REQUIRED_SCI_GENERAL_NAMES = ["물리학", "화학", "생명과학", "지구과학"];
 
 /**
  * 학생의 과목 선택 상태를 진단하여 종합 결과 객체를 반환합니다.
@@ -17,7 +17,7 @@ export const REQUIRED_SCI_GENERAL_NAMES = ["물리학", "화학", "생명과학"
  * @param {boolean} isScienceTrack - 과학중점과정 적용 여부
  * @returns {Object} 진단 결과
  */
-export function validateCurriculum(selectedIds, subjects, selectGroups, isScienceTrack = false) {
+function validateCurriculum(selectedIds, subjects, selectGroups, isScienceTrack = false) {
   let totalCredits = 0;
   let korCredits = 0;
   let mathCredits = 0;
@@ -332,4 +332,8 @@ export function validateCurriculum(selectedIds, subjects, selectGroups, isScienc
     warnings,
     successes
   };
+}
+
+if (typeof window !== "undefined") {
+  window.validateCurriculum = validateCurriculum;
 }

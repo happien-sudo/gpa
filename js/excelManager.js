@@ -1,14 +1,6 @@
-/**
- * 고교학점제 엑셀 표준 양식 다운로드 및 업로드/파싱 모듈 (SheetJS 기반)
- */
-
-import { defaultSubjects, defaultSelectGroups } from "./defaultData.js";
-
-/**
- * 학교별 표준 공통 엑셀 양식(.xlsx)을 생성하고 브라우저에서 다운로드합니다.
- * 기본 편성표 데이터를 예시로 담아 제공하므로 교사가 수정하기 매우 편리합니다.
- */
-export function downloadStandardTemplate() {
+function downloadStandardTemplate() {
+  const subjects = window.defaultSubjects || defaultSubjects;
+  const selectGroups = window.defaultSelectGroups || defaultSelectGroups;
   if (typeof XLSX === "undefined") {
     alert("엑셀 라이브러리(SheetJS)를 불러오는 중입니다. 잠시 후 다시 시도해 주세요.");
     return;
@@ -31,9 +23,9 @@ export function downloadStandardTemplate() {
     ]
   ];
 
-  defaultSubjects.forEach(sub => {
+  subjects.forEach(sub => {
     const isFixed = sub.fixed;
-    const groupInfo = sub.group ? defaultSelectGroups[sub.group] : null;
+    const groupInfo = sub.group ? selectGroups[sub.group] : null;
 
     let sciCategory = "해당없음";
     if (sub.isSciGeneral) sciCategory = "물화생지일반선택";
@@ -117,7 +109,7 @@ export function downloadStandardTemplate() {
  * @param {File} file - 업로드된 File 객체
  * @returns {Promise<Object>} 파싱 결과
  */
-export function parseExcelFile(file) {
+function parseExcelFile(file) {
   return new Promise((resolve, reject) => {
     if (!file) {
       reject(new Error("선택된 파일이 없습니다."));
@@ -278,7 +270,7 @@ export function parseExcelFile(file) {
  * @param {Object} validation - 검증 결과 객체
  * @param {string} schoolName - 학교명
  */
-export function exportSelectionResult(selectedSubjects, validation, schoolName = "정명고등학교") {
+function exportSelectionResult(selectedSubjects, validation, schoolName = "정명고등학교") {
   if (typeof XLSX === "undefined") {
     alert("엑셀 라이브러리(SheetJS)가 아직 준비되지 않았습니다.");
     return;
@@ -372,4 +364,10 @@ export function exportSelectionResult(selectedSubjects, validation, schoolName =
   XLSX.utils.book_append_sheet(wb, wsDiag, "진단보고서");
 
   XLSX.writeFile(wb, `고교학점제_과목선택_진단결과_${new Date().toISOString().slice(0, 10)}.xlsx`);
+}
+
+if (typeof window !== "undefined") {
+  window.downloadStandardTemplate = downloadStandardTemplate;
+  window.parseExcelFile = parseExcelFile;
+  window.exportSelectionResult = exportSelectionResult;
 }

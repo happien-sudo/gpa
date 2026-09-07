@@ -1,18 +1,13 @@
-/**
- * 교과군별 이수 비중 Chart.js 파스텔 도넛 차트 관리자
- */
-
-import { categoryColors } from "./defaultData.js";
-
 let chartInstance = null;
 
-export function initChart(canvasId, initialData = {}) {
+function initChart(canvasId, initialData = {}) {
+  const colors = window.categoryColors || categoryColors;
   const canvas = document.getElementById(canvasId);
   if (!canvas || typeof Chart === "undefined") return null;
 
-  const categories = Object.keys(categoryColors);
-  const bgColors = categories.map(cat => categoryColors[cat]?.accent || "#94A3B8");
-  const borderColors = categories.map(cat => categoryColors[cat]?.border || "#E2E8F0");
+  const categories = Object.keys(colors);
+  const bgColors = categories.map(cat => colors[cat]?.accent || "#94A3B8");
+  const borderColors = categories.map(cat => colors[cat]?.border || "#E2E8F0");
 
   const dataValues = categories.map(cat => initialData[cat] || 0);
 
@@ -95,12 +90,18 @@ export function initChart(canvasId, initialData = {}) {
   return chartInstance;
 }
 
-export function updateChart(categoryData) {
+function updateChart(categoryData) {
   if (!chartInstance) return;
 
-  const categories = Object.keys(categoryColors);
+  const colors = window.categoryColors || categoryColors;
+  const categories = Object.keys(colors);
   const newValues = categories.map(cat => categoryData[cat] || 0);
 
   chartInstance.data.datasets[0].data = newValues;
   chartInstance.update();
+}
+
+if (typeof window !== "undefined") {
+  window.initChart = initChart;
+  window.updateChart = updateChart;
 }

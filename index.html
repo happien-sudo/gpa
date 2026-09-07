@@ -20,6 +20,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <script src="js/html2pdf.bundle.min.js"></script>
 </head>
 <body>
 
@@ -39,10 +40,7 @@
           <i data-lucide="graduation-cap"></i>
         </div>
         <div class="brand-text">
-          <h1>
-            고교학점제 이수 진단기
-            <span class="brand-badge" id="school-badge">정명고등학교</span>
-          </h1>
+          <h1>고교학점제 이수 진단기</h1>
           <p>나의 선택과목으로 알아보는 실시간 졸업 요건 & 과학중점과정 시뮬레이터</p>
         </div>
       </div>
@@ -61,12 +59,7 @@
 
         <!-- 엑셀 양식 다운로드 & 업로드 모달 열기 -->
         <button type="button" class="btn btn-secondary" id="btn-open-excel-modal" title="학교별 엑셀 과목편성표 양식 다운로드 및 업로드">
-          <i data-lucide="file-spreadsheet"></i> 엑셀 관리
-        </button>
-
-        <!-- 선택 결과 엑셀 내보내기 -->
-        <button type="button" class="btn btn-secondary" id="btn-export-result" title="나의 과목 선택표와 진단 결과 엑셀로 저장">
-          <i data-lucide="download"></i> 결과 내보내기
+          <i data-lucide="file-spreadsheet"></i> 양식 다운 및 업로드
         </button>
 
         <!-- 선택 초기화 -->
@@ -215,6 +208,18 @@
       </section>
 
     </main>
+
+    <!-- 하단 푸터 (제작자 표기) -->
+    <footer class="app-footer glass-card">
+      <div class="footer-info">
+        <i data-lucide="graduation-cap" style="width: 16px; height: 16px; color: #3b82f6;"></i>
+        <span>고교학점제 과목 이수 진단기 · 2022 개정 교육과정 기준</span>
+      </div>
+      <div class="footer-creator">
+        <i data-lucide="award" style="width: 16px; height: 16px; color: #f59e0b;"></i>
+        <span>웹앱 제작자: <strong>정명고 오인석</strong></span>
+      </div>
+    </footer>
   </div>
 
   <!-- 토스트 알림 컨테이너 -->
@@ -226,7 +231,7 @@
       <div class="modal-header">
         <div class="modal-title">
           <i data-lucide="file-spreadsheet" style="color: #2563eb;"></i>
-          학교별 교육과정 엑셀 관리
+          교육과정 양식 다운 및 업로드
         </div>
         <button type="button" class="modal-close-btn" id="btn-close-excel-modal">
           <i data-lucide="x"></i>
@@ -266,8 +271,12 @@
     </div>
   </div>
 
-  <!-- 메인 애플리케이션 스크립트 (ES 모듈) -->
-  <script type="module" src="js/app.js"></script>
+  <!-- 애플리케이션 스크립트 (순수 웹 스크립트 - 더블클릭 로컬 실행 완벽 지원) -->
+  <script src="js/defaultData.js"></script>
+  <script src="js/validator.js"></script>
+  <script src="js/chartManager.js"></script>
+  <script src="js/excelManager.js"></script>
+  <script src="js/app.js"></script>
 
 </body>
 </html>

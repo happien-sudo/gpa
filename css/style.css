@@ -213,6 +213,25 @@ body {
   border-radius: 20px;
 }
 
+.creator-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: #334155;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  padding: 2px 8px;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.creator-badge i {
+  color: #2563eb;
+  width: 13px;
+  height: 13px;
+}
+
 .brand-text p {
   font-size: 13px;
   color: var(--text-secondary);
@@ -696,11 +715,12 @@ body {
 
 /* 학기 카드 */
 .semester-card {
-  padding: 24px;
+  padding: 18px 20px;
   display: flex;
   flex-direction: column;
-  gap: 22px;
-  margin-bottom: 20px;
+  gap: 16px;
+  margin-bottom: 16px;
+  border-radius: var(--radius-md);
 }
 
 .semester-title-bar {
@@ -708,12 +728,12 @@ body {
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-  padding-bottom: 12px;
+  padding-bottom: 10px;
 }
 
 .semester-title {
   font-family: var(--font-display);
-  font-size: 18px;
+  font-size: 16.5px;
   font-weight: 800;
   color: var(--text-primary);
   display: flex;
@@ -722,11 +742,12 @@ body {
 }
 
 .semester-term-credits {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  background: rgba(0, 0, 0, 0.03);
-  padding: 3px 10px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #1e40af;
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
+  padding: 2px 10px;
   border-radius: 20px;
 }
 
@@ -736,7 +757,7 @@ body {
 .subject-group-section {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .group-section-header {
@@ -748,7 +769,7 @@ body {
 }
 
 .group-title {
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -757,9 +778,9 @@ body {
 }
 
 .group-selection-badge {
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 700;
-  padding: 3px 10px;
+  padding: 2px 9px;
   border-radius: 20px;
 }
 
@@ -784,38 +805,38 @@ body {
 /* 학교지정 고정 과목 목록 (콤팩트 칩 형태) */
 .fixed-subjects-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 8px;
-  background: rgba(248, 250, 252, 0.8);
-  border: 1px solid rgba(226, 232, 240, 0.8);
-  border-radius: var(--radius-md);
-  padding: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+  gap: 6px;
+  background: rgba(248, 250, 252, 0.85);
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  border-radius: 10px;
+  padding: 10px;
 }
 
 .fixed-subject-chip {
   background: #ffffff;
-  border: 1px solid rgba(226, 232, 240, 0.9);
-  border-radius: 8px;
-  padding: 7px 10px;
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  border-radius: 6px;
+  padding: 5px 8px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 12.5px;
+  font-size: 12px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
 }
 
 .fixed-chip-left {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   overflow: hidden;
 }
 
 .fixed-category-pill {
-  font-size: 10px;
+  font-size: 9.5px;
   font-weight: 700;
-  padding: 1px 5px;
-  border-radius: 4px;
+  padding: 1px 4px;
+  border-radius: 3px;
   white-space: nowrap;
 }
 
@@ -830,92 +851,105 @@ body {
 .fixed-chip-right {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 11.5px;
+  gap: 4px;
+  font-size: 11px;
   font-weight: 700;
   color: var(--text-secondary);
 }
 
-/* 선택 과목 카드 그리드 */
+/* 선택 과목 카드 그리드 - 콤팩트하고 가독성 높은 디자인 */
 .elective-subjects-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+  gap: 8px;
 }
 
 .subject-card {
   background: #ffffff;
-  border: 1px solid rgba(226, 232, 240, 0.9);
-  border-left-width: 5px;
-  border-radius: var(--radius-md);
-  padding: 12px 14px;
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  border-left-width: 4px;
+  border-radius: 9px;
+  padding: 8px 10px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 12px;
-  min-height: 82px;
+  gap: 6px;
+  min-height: 58px;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.015);
-  transition: var(--transition);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  transition: all 0.18s ease;
   user-select: none;
   position: relative;
 }
 
 .subject-card:hover {
-  transform: translateY(-2px);
-  border-color: rgba(203, 213, 225, 1);
-  box-shadow: 0 6px 16px rgba(148, 163, 184, 0.1);
+  transform: translateY(-1.5px);
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(148, 163, 184, 0.15);
 }
 
 .subject-card.selected {
-  background: #f8fafc;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  background: #f0f7ff;
+  border-color: #93c5fd;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
 }
 
 .card-top {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  gap: 6px;
+  align-items: center;
+  gap: 4px;
+  line-height: 1;
 }
 
 .card-category-pill {
-  font-size: 10px;
+  font-size: 9.5px;
   font-weight: 700;
-  padding: 2px 6px;
+  padding: 1.5px 5px;
   border-radius: 4px;
+  letter-spacing: -0.2px;
 }
 
 .card-type-tag {
-  font-size: 9.5px;
-  color: var(--text-tertiary);
+  font-size: 9px;
+  color: #64748b;
   font-weight: 600;
+  background: #f1f5f9;
+  padding: 1px 4px;
+  border-radius: 3px;
+  white-space: nowrap;
 }
 
 .card-subject-name {
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 700;
-  color: var(--text-primary);
-  margin-top: 2px;
+  color: #0f172a;
+  margin: 1px 0;
+  letter-spacing: -0.3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
 }
 
 .card-bottom {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: 2px;
 }
 
 .card-credits {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 700;
+  color: #475569;
 }
 
 /* 커스텀 파스텔 체크박스 */
 .pastel-checkbox {
-  width: 20px;
-  height: 20px;
-  border-radius: 6px;
+  width: 17px;
+  height: 17px;
+  border-radius: 4px;
   border: 1.5px solid #cbd5e1;
   display: flex;
   align-items: center;
@@ -931,10 +965,10 @@ body {
 
 .pastel-checkbox i {
   color: #ffffff;
-  width: 14px;
-  height: 14px;
+  width: 11px;
+  height: 11px;
   opacity: 0;
-  transform: scale(0.5);
+  transform: scale(0.6);
   transition: var(--transition);
 }
 
@@ -1146,6 +1180,429 @@ body {
 }
 
 /* --------------------------------------------------------------------------
+   하단 푸터 스타일
+   -------------------------------------------------------------------------- */
+.app-footer {
+  padding: 14px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.footer-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.footer-creator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: #1e293b;
+  background: rgba(241, 245, 249, 0.9);
+  border: 1px solid #e2e8f0;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+/* --------------------------------------------------------------------------
+   전체 학년 요약 뷰 (All Grades Summary View)
+   -------------------------------------------------------------------------- */
+.summary-view-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.summary-toolbar {
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  background: #ffffff;
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--panel-shadow);
+}
+
+.summary-toolbar-left {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.summary-toolbar-title {
+  font-size: 16.5px;
+  font-weight: 800;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.summary-toolbar-sub {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.summary-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.summary-stat-pill {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 11px;
+  border-radius: 20px;
+  background: #f8fafc;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btn-pdf-download {
+  background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 9px 18px;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-pdf-download:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+  background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
+}
+
+.btn-pdf-download:active {
+  transform: scale(0.98);
+}
+
+/* 학년별 요약 카드 */
+.summary-grade-card {
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: #ffffff;
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--panel-shadow);
+}
+
+.summary-grade-title {
+  font-size: 15.5px;
+  font-weight: 800;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  border-bottom: 1.5px solid #e2e8f0;
+}
+
+.summary-semesters-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.summary-semester-column {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.summary-sem-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.summary-sem-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.summary-sem-credits {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #2563eb;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  padding: 2px 7px;
+  border-radius: 12px;
+}
+
+.summary-subjects-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.summary-subject-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 8px;
+  background: #ffffff;
+  border-radius: 6px;
+  border: 1px solid #edf2f7;
+  font-size: 12px;
+  transition: all 0.15s ease;
+}
+
+.summary-subject-row:hover {
+  border-color: #cbd5e1;
+}
+
+.summary-subject-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow: hidden;
+}
+
+.summary-category-pill {
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 1.5px 5px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.summary-subject-name {
+  font-weight: 600;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.summary-subject-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.summary-badge-type {
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 1.5px 5px;
+  border-radius: 4px;
+}
+
+.summary-badge-fixed {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+
+.summary-badge-selected {
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #6ee7b7;
+}
+
+.summary-empty-text {
+  text-align: center;
+  font-size: 11.5px;
+  color: #94a3b8;
+  padding: 12px 6px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px dashed #cbd5e1;
+  border-radius: 6px;
+}
+
+/* --------------------------------------------------------------------------
+   PDF A4 세로 인쇄 및 다운로드용 템플릿
+   -------------------------------------------------------------------------- */
+#pdf-hidden-template {
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+  width: 760px; /* A4 세로 비율 최적화 폭 */
+  background: #ffffff;
+  color: #1e293b;
+  font-family: var(--font-main);
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.pdf-print-sheet {
+  width: 100%;
+  background: #ffffff;
+  color: #1e293b;
+  box-sizing: border-box;
+}
+
+.pdf-header-banner {
+  border-bottom: 2.5px solid #1e3a8a;
+  padding-bottom: 12px;
+  margin-bottom: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.pdf-header-main h2 {
+  font-size: 20px;
+  font-weight: 800;
+  color: #1e3a8a;
+  margin-bottom: 4px;
+  letter-spacing: -0.5px;
+}
+
+.pdf-header-main p {
+  font-size: 11.5px;
+  color: #64748b;
+}
+
+.pdf-header-meta {
+  font-size: 10.5px;
+  color: #475569;
+  text-align: right;
+  line-height: 1.5;
+}
+
+.pdf-summary-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 10px 14px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+}
+
+.pdf-stat-item {
+  font-size: 11px;
+}
+
+.pdf-stat-label {
+  color: #64748b;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.pdf-stat-val {
+  font-size: 13px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.pdf-table-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.pdf-semester-box {
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 10px;
+  page-break-inside: avoid;
+}
+
+.pdf-semester-title {
+  background: #f1f5f9;
+  border-bottom: 1px solid #cbd5e1;
+  padding: 5px 10px;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #1e3a8a;
+  display: flex;
+  justify-content: space-between;
+}
+
+.pdf-subjects-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 10.5px;
+}
+
+.pdf-subjects-table th {
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 700;
+  text-align: left;
+  padding: 4px 6px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.pdf-subjects-table td {
+  padding: 3.5px 6px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #1e293b;
+}
+
+.pdf-subjects-table tr:nth-child(even) {
+  background: #fafafa;
+}
+
+.pdf-footer-note {
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  color: #64748b;
+}
+
+/* --------------------------------------------------------------------------
+   A4 세로 공식 리포트 시트 (.printable-summary-sheet)
+   -------------------------------------------------------------------------- */
+.printable-summary-sheet {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 22px 26px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  color: #1e293b;
+  font-family: var(--font-main);
+  max-width: 860px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* --------------------------------------------------------------------------
    인쇄 전용 스타일 (@media print)
    -------------------------------------------------------------------------- */
 @media print {
@@ -1154,30 +1611,42 @@ body {
   }
 
   .ambient-mesh,
-  .header-controls,
+  .app-header,
+  .sidebar-dashboard,
   .grade-tabs,
+  .summary-toolbar,
   .toast-container,
   .modal-overlay,
+  .app-footer,
   .btn,
+  .btn-pdf-download,
   .chart-card {
     display: none !important;
   }
 
   .app-wrapper {
-    padding: 0;
+    padding: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
   }
 
   .dashboard-layout {
-    display: block;
+    display: block !important;
   }
 
-  .glass-card {
-    border: 1px solid #ddd !important;
+  .content-area {
+    width: 100% !important;
+  }
+
+  .printable-summary-sheet {
     box-shadow: none !important;
-    background: #ffffff !important;
+    border: none !important;
+    padding: 0 !important;
+    max-width: 100% !important;
   }
 
-  .subject-card {
-    page-break-inside: avoid;
+  @page {
+    size: A4 portrait;
+    margin: 8mm;
   }
 }

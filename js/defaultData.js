@@ -4,7 +4,7 @@
  * 그리고 과학중점과정 판별을 위한 속성(isSciGeneral, isSciAdvanced, isInfo)을 갖습니다.
  */
 
-export const categoryColors = {
+const categoryColors = {
   "국어": {
     bg: "#FFE4E6",       // Pastel Rose Light
     border: "#FDA4AF",   // Pastel Rose Border
@@ -55,7 +55,7 @@ export const categoryColors = {
   }
 };
 
-export const defaultSelectGroups = {
+const defaultSelectGroups = {
   "g2_1_s1": {
     id: "g2_1_s1",
     name: "2학년 1학기 사회·과학 선택군",
@@ -130,7 +130,7 @@ export const defaultSelectGroups = {
   }
 };
 
-export const defaultSubjects = [
+const defaultSubjects = [
   // ==========================================
   // 1학년 1학기 (모두 학교 지정 공통과목)
   // ==========================================
@@ -275,3 +275,9 @@ export const defaultSubjects = [
   { id: "3_2_s2_3", name: "소프트웨어와 생활", credits: 3, category: "기술·가정/정보/제2외국어/한문/교양", fixed: false, grade: 3, term: 2, group: "g3_2_s2", subjectType: "융합선택", isInfo: true },
   { id: "3_2_s2_4", name: "한문 고전 읽기", credits: 3, category: "기술·가정/정보/제2외국어/한문/교양", fixed: false, grade: 3, term: 2, group: "g3_2_s2", subjectType: "진로선택" }
 ];
+
+if (typeof window !== "undefined") {
+  window.categoryColors = categoryColors;
+  window.defaultSelectGroups = defaultSelectGroups;
+  window.defaultSubjects = defaultSubjects;
+}
