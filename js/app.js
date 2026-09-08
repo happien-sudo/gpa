@@ -689,8 +689,8 @@ function downloadPdfSummary() {
     btn.disabled = true;
   }
 
-  // 화면 스크롤을 상단으로 이동하여 html2canvas가 완벽한 좌표로 캡처하도록 지원
-  window.scrollTo(0, 0);
+  // 화면 스크롤을 즉시 맨 위로 이동하여 좌표 왜곡 방지
+  window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
 
   // 학생 정보가 있으면 파일명에 반영
   const info = state.studentInfo;
@@ -704,14 +704,6 @@ function downloadPdfSummary() {
     filenameInfo = `_${parts.join('_')}`;
   }
 
-  // PDF 생성 중에는 일시적으로 시트 너비를 780px로 고정하여 화면 해상도나 창 크기에 관계없이 항상 A4 1장에 완벽하게 맞도록 보장
-  const origWidth = element.style.width;
-  const origMaxWidth = element.style.maxWidth;
-  const origMinWidth = element.style.minWidth;
-  element.style.width = "780px";
-  element.style.maxWidth = "780px";
-  element.style.minWidth = "780px";
-
   const opt = {
     margin: [6, 6, 6, 6],
     filename: `고교학점제_3개년_과목이수표${filenameInfo}_${new Date().toISOString().slice(0, 10)}.pdf`,
@@ -720,18 +712,13 @@ function downloadPdfSummary() {
       scale: 2,
       useCORS: true,
       letterRendering: true,
-      scrollY: 0,
-      scrollX: 0,
-      windowWidth: 1024
+      backgroundColor: '#ffffff'
     },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
     pagebreak: { mode: ['avoid-all'] }
   };
 
   const cleanup = () => {
-    element.style.width = origWidth;
-    element.style.maxWidth = origMaxWidth;
-    element.style.minWidth = origMinWidth;
     if (btn) {
       btn.innerHTML = originalHtml;
       btn.disabled = false;
