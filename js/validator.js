@@ -1,3 +1,6 @@
+(function(window) {
+  'use strict';
+
 /**
  * 고교학점제 학점 이수 및 교육과정 검증 엔진
  */
@@ -334,6 +337,6 @@ function validateCurriculum(selectedIds, subjects, selectGroups, isScienceTrack 
   };
 }
 
-if (typeof window !== "undefined") {
   window.validateCurriculum = validateCurriculum;
-}
+})(typeof window !== "undefined" ? window : globalThis);
+

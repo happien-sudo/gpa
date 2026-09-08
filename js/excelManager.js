@@ -1,6 +1,9 @@
+(function(window) {
+  'use strict';
+
 function downloadStandardTemplate() {
-  const subjects = window.defaultSubjects || defaultSubjects;
-  const selectGroups = window.defaultSelectGroups || defaultSelectGroups;
+  const subjects = window.defaultSubjects || [];
+  const selectGroups = window.defaultSelectGroups || {};
   if (typeof XLSX === "undefined") {
     alert("엑셀 라이브러리(SheetJS)를 불러오는 중입니다. 잠시 후 다시 시도해 주세요.");
     return;
@@ -366,8 +369,8 @@ function exportSelectionResult(selectedSubjects, validation, schoolName = "정�
   XLSX.writeFile(wb, `고교학점제_과목선택_진단결과_${new Date().toISOString().slice(0, 10)}.xlsx`);
 }
 
-if (typeof window !== "undefined") {
   window.downloadStandardTemplate = downloadStandardTemplate;
   window.parseExcelFile = parseExcelFile;
   window.exportSelectionResult = exportSelectionResult;
-}
+})(typeof window !== "undefined" ? window : globalThis);
+

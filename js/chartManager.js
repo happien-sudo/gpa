@@ -1,7 +1,10 @@
+(function(window) {
+  'use strict';
+
 let chartInstance = null;
 
 function initChart(canvasId, initialData = {}) {
-  const colors = window.categoryColors || categoryColors;
+  const colors = window.categoryColors || {};
   const canvas = document.getElementById(canvasId);
   if (!canvas || typeof Chart === "undefined") return null;
 
@@ -93,7 +96,7 @@ function initChart(canvasId, initialData = {}) {
 function updateChart(categoryData) {
   if (!chartInstance) return;
 
-  const colors = window.categoryColors || categoryColors;
+  const colors = window.categoryColors || {};
   const categories = Object.keys(colors);
   const newValues = categories.map(cat => categoryData[cat] || 0);
 
@@ -101,7 +104,7 @@ function updateChart(categoryData) {
   chartInstance.update();
 }
 
-if (typeof window !== "undefined") {
   window.initChart = initChart;
   window.updateChart = updateChart;
-}
+})(typeof window !== "undefined" ? window : globalThis);
+

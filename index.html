@@ -62,6 +62,11 @@
           <i data-lucide="file-spreadsheet"></i> 양식 다운 및 업로드
         </button>
 
+        <!-- 추천 예시 불러오기 -->
+        <button type="button" class="btn btn-secondary" id="btn-apply-example" title="각 학년별 추천 예시 과목(174학점 완벽 충족) 불러오기">
+          <i data-lucide="sparkles"></i> 예시 불러오기
+        </button>
+
         <!-- 선택 초기화 -->
         <button type="button" class="btn btn-danger-soft" id="btn-reset-selections" title="선택 과목 초기화">
           <i data-lucide="rotate-ccw"></i> 초기화
@@ -186,10 +191,10 @@
         
         <!-- 학년 네비게이션 탭 -->
         <nav class="grade-tabs glass-card" id="grade-nav-tabs">
-          <button type="button" class="grade-tab-btn" data-grade="1">
+          <button type="button" class="grade-tab-btn active" data-grade="1">
             <i data-lucide="bookmark"></i> 1학년 (공통/지정)
           </button>
-          <button type="button" class="grade-tab-btn active" data-grade="2">
+          <button type="button" class="grade-tab-btn" data-grade="2">
             <i data-lucide="layers"></i> 2학년 (선택과목)
           </button>
           <button type="button" class="grade-tab-btn" data-grade="3">

@@ -1,6 +1,10 @@
-// 전역 스크립트 객체 참조 (로컬 더블클릭 및 모듈 호환)
+(function(window) {
+  'use strict';
+
+// 전역 스크립트 객체 참조 (로컬 더블클릭, GitHub Pages, 모듈 호환)
 const defaultSubjects = window.defaultSubjects || [];
 const defaultSelectGroups = window.defaultSelectGroups || {};
+const defaultExampleSelections = window.defaultExampleSelections || [];
 const categoryColors = window.categoryColors || {};
 const validateCurriculum = window.validateCurriculum;
 const initChart = window.initChart;
@@ -14,7 +18,7 @@ const state = {
   subjects: [...defaultSubjects],
   selectGroups: { ...defaultSelectGroups },
   schoolName: "정명고등학교",
-  currentGrade: 2, // 2학년 선택과목 화면을 기본 표시
+  currentGrade: 1, // 1학년(공통)부터 확인하도록 1학년을 첫 화면으로 설정
   isScienceTrack: false, // 과학중점과정 모드 여부
   selectedSubjects: new Set(),
   lastValidationStatus: null
@@ -23,9 +27,8 @@ const state = {
 // ============================================================================
 // 초기화 및 라이프사이클
 // ============================================================================
-document.addEventListener("DOMContentLoaded", () => {
+function startApp() {
   loadSavedState();
-  initDefaultSelections();
   setupEventListeners();
   renderGradeTabs();
   renderSemesters();
@@ -36,7 +39,13 @@ document.addEventListener("DOMContentLoaded", () => {
   if (window.lucide) {
     window.lucide.createIcons();
   }
-});
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", startApp);
+} else {
+  startApp();
+}
 
 /**
  * LocalStorage에서 저장된 상태 불러오기
@@ -67,9 +76,15 @@ function loadSavedState() {
     if (savedSelections) {
       const ids = JSON.parse(savedSelections);
       state.selectedSubjects = new Set(ids);
+      initDefaultSelections(); // 학교지정 필수 과목 포함 보장
+    } else {
+      // 처음 접속 시: 각 학년별 추천 예시 과목을 기본으로 세팅하여 보여줌!
+      applyExampleSelections();
+      saveSelectionsToStorage();
     }
   } catch (err) {
     console.warn("로컬 저장소 데이터 로드 중 오류:", err);
+    applyExampleSelections();
   }
 }
 
@@ -83,6 +98,32 @@ function initDefaultSelections() {
     }
   });
 }
+
+/**
+ * 추천/모범 예시 과목 선택 세트 적용 (174학점 완벽 충족 모델)
+ */
+function applyExampleSelections() {
+  state.selectedSubjects.clear();
+  initDefaultSelections();
+
+  const examples = defaultExampleSelections.length > 0 ? defaultExampleSelections : [
+    // 2-1 (선택군1 택4, 선택군2 택1)
+    "2_1_s1_1", "2_1_s1_3", "2_1_s1_5", "2_1_s1_6", "2_1_s2_3",
+    // 2-2 (선택군1 택5, 선택군2 택1)
+    "2_2_s1_2", "2_2_s1_5", "2_2_s1_9", "2_2_s1_10", "2_2_s1_11", "2_2_s2_3",
+    // 3-1 (선택군1 택1, 선택군2 택4, 선택군3 택1)
+    "3_1_s1_1", "3_1_s2_3", "3_1_s2_4", "3_1_s2_8", "3_1_s2_10", "3_1_s3_3",
+    // 3-2 (선택군1 택4, 선택군2 택1)
+    "3_2_s1_1", "3_2_s1_4", "3_2_s1_8", "3_2_s1_10", "3_2_s2_3"
+  ];
+
+  examples.forEach(id => {
+    if (state.subjects.some(s => s.id === id)) {
+      state.selectedSubjects.add(id);
+    }
+  });
+}
+
 
 /**
  * 학교 명칭 배지 업데이트
@@ -159,6 +200,17 @@ function setupEventListeners() {
       showToast("선택 과목이 초기화되었습니다.", "info");
     }
   });
+
+  // 추천 예시 불러오기 버튼
+  const btnApplyExample = document.getElementById("btn-apply-example");
+  btnApplyExample?.addEventListener("click", () => {
+    applyExampleSelections();
+    saveSelectionsToStorage();
+    renderSemesters();
+    recalculate();
+    showToast("모범 예시 교육과정(174학점 완벽 충족)이 적용되었습니다.", "success");
+  });
+
 
   // 엑셀 모달 열기/닫기
   const btnOpenModal = document.getElementById("btn-open-excel-modal");
@@ -1042,3 +1094,6 @@ function showToast(message, type = "info") {
     setTimeout(() => toast.remove(), 260);
   }, 3200);
 }
+
+})(typeof window !== "undefined" ? window : globalThis);
+

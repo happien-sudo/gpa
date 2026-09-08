@@ -1,3 +1,6 @@
+(function(window) {
+  'use strict';
+
 /**
  * 고교학점제 과목 데이터셋 (2022 개정 교육과정 및 표준 고교 편성표 기준)
  * 각 과목은 id, name, credits, category, grade, term, fixed, group, subjectType,
@@ -276,8 +279,21 @@ const defaultSubjects = [
   { id: "3_2_s2_4", name: "한문 고전 읽기", credits: 3, category: "기술·가정/정보/제2외국어/한문/교양", fixed: false, grade: 3, term: 2, group: "g3_2_s2", subjectType: "진로선택" }
 ];
 
-if (typeof window !== "undefined") {
+  // 추천/예시 선택과목 세트 (총 174학점 완벽 충족 모델)
+  const defaultExampleSelections = [
+    // 2-1 (선택군1 택4, 선택군2 택1)
+    "2_1_s1_1", "2_1_s1_3", "2_1_s1_5", "2_1_s1_6", "2_1_s2_3",
+    // 2-2 (선택군1 택5, 선택군2 택1)
+    "2_2_s1_2", "2_2_s1_5", "2_2_s1_9", "2_2_s1_10", "2_2_s1_11", "2_2_s2_3",
+    // 3-1 (선택군1 택1, 선택군2 택4, 선택군3 택1)
+    "3_1_s1_1", "3_1_s2_3", "3_1_s2_4", "3_1_s2_8", "3_1_s2_10", "3_1_s3_3",
+    // 3-2 (선택군1 택4, 선택군2 택1)
+    "3_2_s1_1", "3_2_s1_4", "3_2_s1_8", "3_2_s1_10", "3_2_s2_3"
+  ];
+
   window.categoryColors = categoryColors;
   window.defaultSelectGroups = defaultSelectGroups;
   window.defaultSubjects = defaultSubjects;
-}
+  window.defaultExampleSelections = defaultExampleSelections;
+})(typeof window !== "undefined" ? window : globalThis);
+
