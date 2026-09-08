@@ -470,18 +470,18 @@ function renderAllGradesSummary(container) {
           const bg = idx % 2 === 1 ? '#f8fafc' : '#ffffff';
           rowsHtml += `
             <tr style="background: ${bg}; border-bottom: 1px solid #f1f5f9;">
-              <td style="padding: 4px 8px; font-weight: 700; color: ${s.fixed ? '#64748b' : '#059669'}; font-size: 10px; width: 56px;">
-                <span style="background: ${s.fixed ? '#f1f5f9' : '#ecfdf5'}; border: 1px solid ${s.fixed ? '#cbd5e1' : '#a7f3d0'}; padding: 1px 5px; border-radius: 4px; display: inline-block;">
+              <td style="padding: 3px 4px; width: 56px; text-align: center; white-space: nowrap; vertical-align: middle;">
+                <span style="background: ${s.fixed ? '#f1f5f9' : '#ecfdf5'}; border: 1px solid ${s.fixed ? '#cbd5e1' : '#a7f3d0'}; color: ${s.fixed ? '#475569' : '#059669'}; padding: 1.5px 4px; border-radius: 4px; display: inline-block; white-space: nowrap; word-break: keep-all; font-size: 9px; font-weight: 700; letter-spacing: -0.4px; line-height: 1.2;">
                   ${s.fixed ? '학교지정' : '학생선택'}
                 </span>
               </td>
-              <td style="padding: 4px 8px; font-size: 10.5px; color: #475569; width: 50px;">
+              <td style="padding: 3px 4px; font-size: 10px; color: #475569; width: 42px; text-align: center; white-space: nowrap; vertical-align: middle;">
                 ${s.category.length > 5 ? '교양' : s.category}
               </td>
-              <td style="padding: 4px 8px; font-weight: 700; font-size: 11px; color: #0f172a;">
+              <td style="padding: 3px 6px; font-weight: 700; font-size: 10.5px; color: #0f172a; word-break: keep-all; vertical-align: middle;">
                 ${s.name}
               </td>
-              <td style="padding: 4px 8px; text-align: right; font-weight: 700; font-size: 10.5px; color: #1e40af; width: 42px;">
+              <td style="padding: 3px 4px; text-align: right; font-weight: 700; font-size: 10.5px; color: #1e40af; width: 36px; white-space: nowrap; vertical-align: middle;">
                 ${s.credits}학점
               </td>
             </tr>
@@ -490,18 +490,18 @@ function renderAllGradesSummary(container) {
       }
 
       termsCols += `
-        <div style="flex: 1; border: 1px solid #cbd5e1; border-radius: 7px; overflow: hidden; background: #ffffff;">
+        <div style="flex: 1; min-width: 0; border: 1px solid #cbd5e1; border-radius: 7px; overflow: hidden; background: #ffffff;">
           <div style="background: #f1f5f9; padding: 6px 10px; font-size: 12px; font-weight: 800; color: #1e3a8a; display: flex; justify-content: space-between; border-bottom: 1px solid #cbd5e1;">
             <span>${grade}학년 ${term}학기</span>
             <span style="color: #2563eb;">${termCr}학점</span>
           </div>
-          <table style="width: 100%; border-collapse: collapse;">
+          <table style="width: 100%; border-collapse: collapse; table-layout: fixed;">
             <thead>
               <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; font-size: 9.5px; color: #64748b; text-align: left;">
-                <th style="padding: 4px 8px;">구분</th>
-                <th style="padding: 4px 8px;">교과군</th>
-                <th style="padding: 4px 8px;">과목명</th>
-                <th style="padding: 4px 8px; text-align: right;">학점</th>
+                <th style="padding: 4px 4px; width: 56px; text-align: center; white-space: nowrap;">구분</th>
+                <th style="padding: 4px 4px; width: 42px; text-align: center; white-space: nowrap;">교과군</th>
+                <th style="padding: 4px 6px;">과목명</th>
+                <th style="padding: 4px 4px; text-align: right; width: 36px; white-space: nowrap;">학점</th>
               </tr>
             </thead>
             <tbody>
@@ -537,7 +537,6 @@ function renderAllGradesSummary(container) {
       <div style="text-align: right; font-size: 10px; color: #475569; line-height: 1.6;">
         <div>발행일자: <strong>${printDate}</strong></div>
         <div>과정구분: <strong>${state.isScienceTrack ? '과학중점과정' : '일반과정'}</strong></div>
-        <div style="color: #2563eb; font-weight: 700;">웹앱 제작: 정명고 오인석</div>
       </div>
     </div>
 
@@ -566,10 +565,10 @@ function renderAllGradesSummary(container) {
     <!-- 학년별 표 영역 -->
     ${semestersHtml}
 
-    <!-- 문서 하단 푸터 및 서명 영역 -->
+    <!-- 문서 하단 푸터 및 안내 영역 -->
     <div style="margin-top: 14px; padding-top: 8px; border-top: 1px solid #cbd5e1; display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: #64748b;">
-      <div>* 본 이수표는 학교 지정 필수 과목과 학생이 직접 선택한 과목만으로 구성된 개인 교육과정표입니다.</div>
-      <div style="font-weight: 700; color: #1e293b;">웹앱 제작자: 정명고 오인석</div>
+      <div>* 본 이수표는 학교 지정 필수 과목과 학생이 직접 선택한 과목으로 구성된 3개년 개인 교육과정표입니다.</div>
+      <div>2022 개정 교육과정 기준</div>
     </div>
   `;
 
